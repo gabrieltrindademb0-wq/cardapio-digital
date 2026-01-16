@@ -54,7 +54,6 @@
             border-radius: 10px; cursor: pointer; font-weight: 900; color: #0d2b18;
         }
 
-        /* Footer Atualizado */
         .footer-info {
             text-align: center;
             padding: 40px 20px;
@@ -68,7 +67,6 @@
         .address-text a { color: #bcaea6; text-decoration: none; }
         .address-text strong { color: var(--highlight); display: block; margin-bottom: 5px; }
 
-        /* Barra de Carrinho Fixa */
         .cart-footer {
             position: fixed; bottom: 0; width: 100%; background: var(--header-orange);
             color: var(--text-light); padding: 18px 25px; display: flex; 
@@ -87,7 +85,6 @@
             border: 2px solid var(--header-orange);
         }
 
-        /* Modal e Checkout */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: flex-start; z-index: 1000; overflow-y: auto; padding: 20px 10px; }
         .modal-content { background: #fff; color: #333; padding: 25px; border-radius: 15px; width: 100%; max-width: 450px; margin-top: 20px; }
         
@@ -218,7 +215,7 @@
             <textarea id="cust-obs" rows="2" placeholder="Ex: Sem cebola, trocar carne..."></textarea>
         </div>
 
-        <div id="store-closed-msg">🛵 Mont Beer fechada agora. Abrimos às 18:30!</div>
+        <div id="store-closed-msg">🛵 Mont Beer fechada agora. Atendimento das 08:00 às 02:00!</div>
         <button class="btn-send" id="finalizar-btn" onclick="sendWhatsApp()">FINALIZAR NO WHATSAPP</button>
         <button class="btn-close" onclick="toggleModal(false)">VOLTAR AO MENU</button>
     </div>
@@ -276,15 +273,16 @@
         }
     }
 
+    // Função de horário atualizada para 08:00 às 02:00
     function isStoreOpen() {
         const agora = new Date();
         const hora = agora.getHours();
-        const min = agora.getMinutes();
-        const tempoAtual = hora * 60 + min;
-        const tempoAbertura = 18 * 60 + 30; // 18:30
-        const tempoFechamento = 23 * 60 + 59; 
         
-        return (tempoAtual >= tempoAbertura && tempoAtual <= tempoFechamento);
+        // Aberto se for entre 08:00 e 23:59 OU entre 00:00 e 01:59 (madrugada)
+        if (hora >= 8 || hora < 2) {
+            return true;
+        }
+        return false;
     }
 
     function updateCart(name, price, change) {
