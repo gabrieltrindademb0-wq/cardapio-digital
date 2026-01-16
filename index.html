@@ -13,20 +13,20 @@
             --highlight: #FFC857;
             --text-light: #F5F5F5;
             --action-green: #2ECC71;
+            --error-red: #e74c3c;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        
-        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 90px; }
+        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 100px; }
 
         header { 
             background: var(--header-orange); 
-            padding: 20px 10px; 
+            padding: 30px 10px; 
             text-align: center; 
             border-bottom: 4px solid var(--highlight); 
         }
 
-        .logo-img { max-width: 100%; height: auto; max-height: 100px; display: block; margin: 0 auto; }
+        .logo-img { max-width: 100%; height: auto; max-height: 110px; display: block; margin: 0 auto; }
 
         .tabs-container { background: var(--card-bg); position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
@@ -47,7 +47,6 @@
         .product-info h3 { font-size: 1.1rem; color: var(--highlight); margin-bottom: 4px; }
         .product-info p { font-size: 0.85rem; color: #bcaea6; margin-bottom: 8px; }
         .product-price { color: var(--action-green); font-weight: 800; font-size: 1.2rem; }
-        
         .product-img { width: 85px; height: 85px; border-radius: 12px; object-fit: cover; margin-right: 12px; }
 
         .add-btn { 
@@ -55,12 +54,25 @@
             border-radius: 10px; cursor: pointer; font-weight: 900; color: #0d2b18;
         }
 
+        /* Footer Carrinho */
         .cart-footer {
             position: fixed; bottom: 0; width: 100%; background: var(--header-orange);
             color: var(--text-light); padding: 18px 25px; display: flex; 
             justify-content: space-between; align-items: center; z-index: 99;
+            cursor: pointer;
         }
 
+        .cart-icon-wrapper { position: relative; }
+        .cart-badge {
+            position: absolute; top: -10px; right: -12px;
+            background: var(--highlight); color: #000;
+            font-size: 0.7rem; font-weight: bold;
+            width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--header-orange);
+        }
+
+        /* Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: flex-start; z-index: 1000; overflow-y: auto; padding: 20px 10px; }
         .modal-content { background: #fff; color: #333; padding: 20px; border-radius: 15px; width: 100%; max-width: 450px; margin-top: 20px; }
         
@@ -72,10 +84,23 @@
         label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #555; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         
-        #change-container { display: none; background: #fff9e6; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px dashed #FFC857; }
+        #address-container, #change-container { display: none; margin-top: 10px; }
 
         .btn-send { background: var(--action-green); color: white; border: none; width: 100%; padding: 15px; font-weight: bold; border-radius: 8px; margin-top: 20px; cursor: pointer; font-size: 1rem; }
+        .btn-send:disabled { background: #ccc; cursor: not-allowed; }
         .btn-close { background: #f2f2f2; color: #666; border: none; width: 100%; padding: 10px; margin-top: 10px; border-radius: 8px; cursor: pointer; }
+        
+        #store-closed-msg { 
+            display: none; 
+            background: #ffebee; 
+            color: var(--error-red); 
+            font-weight: bold; 
+            text-align: center; 
+            padding: 10px; 
+            border-radius: 8px; 
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +121,10 @@
 <div class="container" id="menu-container"></div>
 
 <div class="cart-footer" onclick="toggleModal(true)">
-    <span><i class="fas fa-shopping-cart"></i> CARRINHO</span>
+    <div class="cart-icon-wrapper">
+        <i class="fas fa-shopping-cart"></i>
+        <div class="cart-badge" id="cart-badge-count">0</div>
+    </div>
     <span id="cart-total-footer" style="font-weight: bold; color: var(--highlight);">R$ 0,00</span>
 </div>
 
@@ -106,8 +134,16 @@
         
         <div id="cart-list-details" style="margin-bottom: 20px;"></div>
 
-        <div style="text-align: right; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px;">
-            Total: <span id="modal-total-value" style="color: var(--action-green);">R$ 0,00</span>
+        <div style="background: #f9f9f9; padding: 12px; border-radius: 10px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                <span>Subtotal:</span> <span id="subtotal-val">R$ 0,00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                <span>Taxa de Entrega:</span> <span id="taxa-val">R$ 0,00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; margin-top: 5px;">
+                <span>Total:</span> <span id="modal-total-value" style="color: var(--action-green);">R$ 0,00</span>
+            </div>
         </div>
 
         <div class="form-group">
@@ -116,6 +152,14 @@
         </div>
 
         <div class="form-group">
+            <label>Como deseja receber? *</label>
+            <select id="order-type" onchange="handleOrderTypeChange()">
+                <option value="Retirada">Retirada no Balcão (Grátis)</option>
+                <option value="Entrega">Entrega (Taxa R$ 5,00)</option>
+            </select>
+        </div>
+
+        <div id="address-container" class="form-group">
             <label>Endereço de Entrega *</label>
             <input type="text" id="cust-address" placeholder="Rua, número e bairro">
         </div>
@@ -124,14 +168,14 @@
             <label>Forma de Pagamento *</label>
             <select id="cust-payment" onchange="handlePaymentChange()">
                 <option value="Pix">Pix</option>
-                <option value="Cartão de Crédito/Débito">Cartão (Maquininha)</option>
+                <option value="Cartão">Cartão (Maquininha)</option>
                 <option value="Dinheiro">Dinheiro</option>
             </select>
         </div>
 
         <div id="change-container">
             <label>Precisa de troco para quanto?</label>
-            <input type="text" id="cust-change" placeholder="Ex: R$ 100,00 (Deixe vazio se não precisar)">
+            <input type="text" id="cust-change" placeholder="Ex: R$ 100,00">
         </div>
 
         <div class="form-group">
@@ -139,7 +183,8 @@
             <textarea id="cust-obs" rows="2" placeholder="Ex: Sem cebola, trocar carne..."></textarea>
         </div>
 
-        <button class="btn-send" onclick="sendWhatsApp()">FINALIZAR NO WHATSAPP</button>
+        <div id="store-closed-msg">🛵 Loja Fechada! Abrimos das 08:00 às 23:00.</div>
+        <button class="btn-send" id="finalizar-btn" onclick="sendWhatsApp()">FINALIZAR NO WHATSAPP</button>
         <button class="btn-close" onclick="toggleModal(false)">VOLTAR AO MENU</button>
     </div>
 </div>
@@ -170,6 +215,7 @@
     };
 
     let cart = {};
+    const ENTREGA_VALOR = 5.0;
 
     function renderMenu() {
         const container = document.getElementById('menu-container');
@@ -195,17 +241,22 @@
         }
     }
 
-    function showCategory(id) {
-        document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        event.currentTarget.classList.add('active');
+    // Função silenciosa de checagem de horário
+    function isStoreOpen() {
+        const agora = new Date();
+        const hora = agora.getHours();
+        return (hora >= 8 && hora < 23);
     }
 
     function updateCart(name, price, change) {
         if (!cart[name]) cart[name] = { price: price, qnt: 0 };
         cart[name].qnt += change;
         if (cart[name].qnt <= 0) delete cart[name];
+        
+        let totalItens = 0;
+        for(let n in cart) totalItens += cart[n].qnt;
+        document.getElementById('cart-badge-count').innerText = totalItens;
+        
         renderCartItems();
         updateTotal();
     }
@@ -220,10 +271,7 @@
         for (let n in cart) {
             list.innerHTML += `
                 <div class="cart-item">
-                    <div>
-                        <div style="font-weight:bold">${n}</div>
-                        <div style="font-size:0.8rem; color:#888">R$ ${cart[n].price.toFixed(2).replace('.',',')} un.</div>
-                    </div>
+                    <div><div style="font-weight:bold">${n}</div></div>
                     <div class="qty-controls">
                         <button class="qty-btn" onclick="updateCart('${n}', ${cart[n].price}, -1)">-</button>
                         <span>${cart[n].qnt}</span>
@@ -235,49 +283,66 @@
     }
 
     function updateTotal() {
-        let total = 0;
-        for (let n in cart) total += cart[n].price * cart[n].qnt;
-        const totalStr = `R$ ${total.toFixed(2).replace('.',',')}`;
-        document.getElementById('cart-total-footer').innerText = totalStr;
-        document.getElementById('modal-total-value').innerText = totalStr;
+        let subtotal = 0;
+        for (let n in cart) subtotal += cart[n].price * cart[n].qnt;
+        const taxa = (document.getElementById('order-type').value === "Entrega") ? ENTREGA_VALOR : 0;
+        const totalFinal = subtotal + taxa;
+
+        document.getElementById('subtotal-val').innerText = `R$ ${subtotal.toFixed(2).replace('.',',')}`;
+        document.getElementById('taxa-val').innerText = `R$ ${taxa.toFixed(2).replace('.',',')}`;
+        document.getElementById('modal-total-value').innerText = `R$ ${totalFinal.toFixed(2).replace('.',',')}`;
+        document.getElementById('cart-total-footer').innerText = `R$ ${totalFinal.toFixed(2).replace('.',',')}`;
+    }
+
+    function handleOrderTypeChange() {
+        document.getElementById('address-container').style.display = (document.getElementById('order-type').value === "Entrega") ? "block" : "none";
+        updateTotal();
     }
 
     function handlePaymentChange() {
-        const paymentMethod = document.getElementById('cust-payment').value;
-        const changeContainer = document.getElementById('change-container');
-        changeContainer.style.display = (paymentMethod === "Dinheiro") ? "block" : "none";
+        document.getElementById('change-container').style.display = (document.getElementById('cust-payment').value === "Dinheiro") ? "block" : "none";
+    }
+
+    function showCategory(id) {
+        document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
     function toggleModal(show) {
-        if (show && Object.keys(cart).length === 0) return alert("Adicione itens antes!");
+        if (show && Object.keys(cart).length === 0) return alert("Seu carrinho está vazio!");
         document.getElementById('orderModal').style.display = show ? 'flex' : 'none';
+        
+        // Valida horário na abertura do carrinho
+        const aberto = isStoreOpen();
+        document.getElementById('finalizar-btn').disabled = !aberto;
+        document.getElementById('store-closed-msg').style.display = aberto ? "none" : "block";
     }
 
     function sendWhatsApp() {
+        if(!isStoreOpen()) return alert("Desculpe, a loja já fechou!");
+        
         const name = document.getElementById('cust-name').value;
+        const type = document.getElementById('order-type').value;
         const addr = document.getElementById('cust-address').value;
         const pay = document.getElementById('cust-payment').value;
         const change = document.getElementById('cust-change').value;
         const obs = document.getElementById('cust-obs').value;
 
-        if (!name || !addr) return alert("Por favor, preencha nome e endereço!");
+        if (!name) return alert("Informe seu nome.");
+        if (type === "Entrega" && !addr) return alert("Informe o endereço.");
 
         let msg = `*PEDIDO MONT BEER*\n\n`;
-        msg += `*Cliente:* ${name}\n`;
-        msg += `*Endereço:* ${addr}\n`;
+        msg += `*Cliente:* ${name}\n*Tipo:* ${type}\n`;
+        if(type === "Entrega") msg += `*Endereço:* ${addr}\n`;
         msg += `*Pagamento:* ${pay}\n`;
-        
-        if(pay === "Dinheiro" && change) {
-            msg += `*Troco para:* ${change}\n`;
-        }
-        
-        if(obs) msg += `*Obs:* ${obs}\n`;
-        msg += `\n*ITENS:*\n`;
+        if(pay === "Dinheiro" && change) msg += `*Troco para:* ${change}\n`;
+        if(obs) msg += `*Obs:* ${obs}\n\n*ITENS:*\n`;
 
-        for (let n in cart) {
-            msg += `• ${cart[n].qnt}x ${n} (R$ ${(cart[n].price * cart[n].qnt).toFixed(2)})\n`;
-        }
+        for (let n in cart) msg += `• ${cart[n].qnt}x ${n}\n`;
 
+        msg += `\n*TAXA:* ${document.getElementById('taxa-val').innerText}`;
         msg += `\n*TOTAL:* ${document.getElementById('modal-total-value').innerText}`;
 
         window.open(`https://wa.me/5535997814774?text=${encodeURIComponent(msg)}`);
