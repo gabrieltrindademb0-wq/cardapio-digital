@@ -17,7 +17,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 100px; }
+        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 110px; }
 
         header { 
             background: var(--header-orange); 
@@ -54,12 +54,27 @@
             border-radius: 10px; cursor: pointer; font-weight: 900; color: #0d2b18;
         }
 
-        /* Footer Carrinho */
+        /* Footer Atualizado */
+        .footer-info {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+        .footer-info h4 { color: var(--highlight); margin-bottom: 15px; font-size: 1rem; }
+        .social-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 15px; }
+        .social-links a { color: var(--text-light); font-size: 2rem; text-decoration: none; }
+        .address-text { font-size: 0.9rem; line-height: 1.6; }
+        .address-text a { color: #bcaea6; text-decoration: none; }
+        .address-text strong { color: var(--highlight); display: block; margin-bottom: 5px; }
+
+        /* Barra de Carrinho Fixa */
         .cart-footer {
             position: fixed; bottom: 0; width: 100%; background: var(--header-orange);
             color: var(--text-light); padding: 18px 25px; display: flex; 
             justify-content: space-between; align-items: center; z-index: 99;
             cursor: pointer;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
         }
 
         .cart-icon-wrapper { position: relative; }
@@ -72,19 +87,20 @@
             border: 2px solid var(--header-orange);
         }
 
-        /* Modal */
+        /* Modal e Checkout */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: flex-start; z-index: 1000; overflow-y: auto; padding: 20px 10px; }
-        .modal-content { background: #fff; color: #333; padding: 20px; border-radius: 15px; width: 100%; max-width: 450px; margin-top: 20px; }
+        .modal-content { background: #fff; color: #333; padding: 25px; border-radius: 15px; width: 100%; max-width: 450px; margin-top: 20px; }
         
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .qty-controls { display: flex; align-items: center; gap: 10px; }
-        .qty-btn { background: #eee; border: none; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .qty-controls { display: flex; align-items: center; gap: 12px; }
+        .qty-btn { background: #f0f0f0; border: none; width: 28px; height: 28px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
         .form-group { margin-top: 15px; }
         label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #555; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         
         #address-container, #change-container { display: none; margin-top: 10px; }
+        #change-container { background: #fff9e6; padding: 10px; border-radius: 8px; border: 1px dashed #FFC857; }
 
         .btn-send { background: var(--action-green); color: white; border: none; width: 100%; padding: 15px; font-weight: bold; border-radius: 8px; margin-top: 20px; cursor: pointer; font-size: 1rem; }
         .btn-send:disabled { background: #ccc; cursor: not-allowed; }
@@ -96,7 +112,7 @@
             color: var(--error-red); 
             font-weight: bold; 
             text-align: center; 
-            padding: 10px; 
+            padding: 12px; 
             border-radius: 8px; 
             margin-top: 15px;
             font-size: 0.9rem;
@@ -120,6 +136,25 @@
 
 <div class="container" id="menu-container"></div>
 
+<footer class="footer-info">
+    <h4>Siga-nos e Visite-nos</h4>
+    <div class="social-links">
+        <a href="https://www.instagram.com/mont.beer/" target="_blank" title="Instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://maps.app.goo.gl/KyReCKWmVPa4Wjvw6" target="_blank" title="Como Chegar">
+            <i class="fas fa-map-marker-alt"></i>
+        </a>
+    </div>
+    <p class="address-text">
+        <a href="https://maps.app.goo.gl/KyReCKWmVPa4Wjvw6" target="_blank">
+            <strong>Mont Beer</strong>
+            Av. Francisco W. dos Anjos, 137<br>
+            Monte Belo - MG | 37115-000
+        </a>
+    </p>
+</footer>
+
 <div class="cart-footer" onclick="toggleModal(true)">
     <div class="cart-icon-wrapper">
         <i class="fas fa-shopping-cart"></i>
@@ -134,21 +169,21 @@
         
         <div id="cart-list-details" style="margin-bottom: 20px;"></div>
 
-        <div style="background: #f9f9f9; padding: 12px; border-radius: 10px; margin-bottom: 20px;">
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
                 <span>Subtotal:</span> <span id="subtotal-val">R$ 0,00</span>
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
                 <span>Taxa de Entrega:</span> <span id="taxa-val">R$ 0,00</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; margin-top: 5px;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; margin-top: 8px;">
                 <span>Total:</span> <span id="modal-total-value" style="color: var(--action-green);">R$ 0,00</span>
             </div>
         </div>
 
         <div class="form-group">
             <label>Nome do Cliente *</label>
-            <input type="text" id="cust-name" placeholder="Como te chamamos?">
+            <input type="text" id="cust-name" placeholder="Seu nome">
         </div>
 
         <div class="form-group">
@@ -160,7 +195,7 @@
         </div>
 
         <div id="address-container" class="form-group">
-            <label>Endereço de Entrega *</label>
+            <label>Endereço Completo *</label>
             <input type="text" id="cust-address" placeholder="Rua, número e bairro">
         </div>
 
@@ -174,16 +209,16 @@
         </div>
 
         <div id="change-container">
-            <label>Precisa de troco para quanto?</label>
-            <input type="text" id="cust-change" placeholder="Ex: R$ 100,00">
+            <label>Troco para quanto?</label>
+            <input type="text" id="cust-change" placeholder="Ex: 50,00">
         </div>
 
         <div class="form-group">
-            <label>Observações (Opcional)</label>
+            <label>Observações</label>
             <textarea id="cust-obs" rows="2" placeholder="Ex: Sem cebola, trocar carne..."></textarea>
         </div>
 
-        <div id="store-closed-msg">🛵 Loja Fechada! Abrimos das 08:00 às 23:00.</div>
+        <div id="store-closed-msg">🛵 Mont Beer fechada agora. Abrimos às 18:30!</div>
         <button class="btn-send" id="finalizar-btn" onclick="sendWhatsApp()">FINALIZAR NO WHATSAPP</button>
         <button class="btn-close" onclick="toggleModal(false)">VOLTAR AO MENU</button>
     </div>
@@ -215,7 +250,7 @@
     };
 
     let cart = {};
-    const ENTREGA_VALOR = 5.0;
+    const TAXA_ENTREGA = 5.0;
 
     function renderMenu() {
         const container = document.getElementById('menu-container');
@@ -241,11 +276,15 @@
         }
     }
 
-    // Função silenciosa de checagem de horário
     function isStoreOpen() {
         const agora = new Date();
         const hora = agora.getHours();
-        return (hora >= 8 && hora < 23);
+        const min = agora.getMinutes();
+        const tempoAtual = hora * 60 + min;
+        const tempoAbertura = 18 * 60 + 30; // 18:30
+        const tempoFechamento = 23 * 60 + 59; 
+        
+        return (tempoAtual >= tempoAbertura && tempoAtual <= tempoFechamento);
     }
 
     function updateCart(name, price, change) {
@@ -271,7 +310,7 @@
         for (let n in cart) {
             list.innerHTML += `
                 <div class="cart-item">
-                    <div><div style="font-weight:bold">${n}</div></div>
+                    <div style="font-weight:bold">${n}</div>
                     <div class="qty-controls">
                         <button class="qty-btn" onclick="updateCart('${n}', ${cart[n].price}, -1)">-</button>
                         <span>${cart[n].qnt}</span>
@@ -285,7 +324,7 @@
     function updateTotal() {
         let subtotal = 0;
         for (let n in cart) subtotal += cart[n].price * cart[n].qnt;
-        const taxa = (document.getElementById('order-type').value === "Entrega") ? ENTREGA_VALOR : 0;
+        const taxa = (document.getElementById('order-type').value === "Entrega") ? TAXA_ENTREGA : 0;
         const totalFinal = subtotal + taxa;
 
         document.getElementById('subtotal-val').innerText = `R$ ${subtotal.toFixed(2).replace('.',',')}`;
@@ -311,17 +350,16 @@
     }
 
     function toggleModal(show) {
-        if (show && Object.keys(cart).length === 0) return alert("Seu carrinho está vazio!");
+        if (show && Object.keys(cart).length === 0) return alert("Adicione itens ao carrinho!");
         document.getElementById('orderModal').style.display = show ? 'flex' : 'none';
         
-        // Valida horário na abertura do carrinho
         const aberto = isStoreOpen();
         document.getElementById('finalizar-btn').disabled = !aberto;
         document.getElementById('store-closed-msg').style.display = aberto ? "none" : "block";
     }
 
     function sendWhatsApp() {
-        if(!isStoreOpen()) return alert("Desculpe, a loja já fechou!");
+        if(!isStoreOpen()) return alert("O Mont Beer está fechado agora!");
         
         const name = document.getElementById('cust-name').value;
         const type = document.getElementById('order-type').value;
@@ -330,10 +368,10 @@
         const change = document.getElementById('cust-change').value;
         const obs = document.getElementById('cust-obs').value;
 
-        if (!name) return alert("Informe seu nome.");
-        if (type === "Entrega" && !addr) return alert("Informe o endereço.");
+        if (!name) return alert("Seu nome é necessário.");
+        if (type === "Entrega" && !addr) return alert("O endereço de entrega é necessário.");
 
-        let msg = `*PEDIDO MONT BEER*\n\n`;
+        let msg = `*NOVO PEDIDO - MONT BEER*\n\n`;
         msg += `*Cliente:* ${name}\n*Tipo:* ${type}\n`;
         if(type === "Entrega") msg += `*Endereço:* ${addr}\n`;
         msg += `*Pagamento:* ${pay}\n`;
@@ -342,7 +380,6 @@
 
         for (let n in cart) msg += `• ${cart[n].qnt}x ${n}\n`;
 
-        msg += `\n*TAXA:* ${document.getElementById('taxa-val').innerText}`;
         msg += `\n*TOTAL:* ${document.getElementById('modal-total-value').innerText}`;
 
         window.open(`https://wa.me/5535997814774?text=${encodeURIComponent(msg)}`);
