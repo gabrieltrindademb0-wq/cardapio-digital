@@ -67,15 +67,17 @@
         .address-text a { color: #bcaea6; text-decoration: none; }
         .address-text strong { color: var(--highlight); display: block; margin-bottom: 5px; }
 
+        /* Barra de Carrinho Atualizada */
         .cart-footer {
             position: fixed; bottom: 0; width: 100%; background: var(--header-orange);
-            color: var(--text-light); padding: 18px 25px; display: flex; 
+            color: var(--text-light); padding: 15px 20px; display: flex; 
             justify-content: space-between; align-items: center; z-index: 99;
-            cursor: pointer;
             box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
         }
 
-        .cart-icon-wrapper { position: relative; }
+        .cart-info-left { display: flex; align-items: center; gap: 20px; cursor: pointer; }
+
+        .cart-icon-wrapper { position: relative; font-size: 1.5rem; }
         .cart-badge {
             position: absolute; top: -10px; right: -12px;
             background: var(--highlight); color: #000;
@@ -83,6 +85,19 @@
             width: 18px; height: 18px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             border: 2px solid var(--header-orange);
+        }
+
+        /* Novo Botão Finalizar */
+        .btn-finish-cart {
+            background: var(--action-green);
+            color: #0d2b18;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
         }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: flex-start; z-index: 1000; overflow-y: auto; padding: 20px 10px; }
@@ -136,10 +151,10 @@
 <footer class="footer-info">
     <h4>Siga-nos e Visite-nos</h4>
     <div class="social-links">
-        <a href="https://www.instagram.com/mont.beer/" target="_blank" title="Instagram">
+        <a href="https://www.instagram.com/mont.beer/" target="_blank">
             <i class="fab fa-instagram"></i>
         </a>
-        <a href="https://maps.app.goo.gl/KyReCKWmVPa4Wjvw6" target="_blank" title="Como Chegar">
+        <a href="https://maps.app.goo.gl/KyReCKWmVPa4Wjvw6" target="_blank">
             <i class="fas fa-map-marker-alt"></i>
         </a>
     </div>
@@ -152,12 +167,18 @@
     </p>
 </footer>
 
-<div class="cart-footer" onclick="toggleModal(true)">
-    <div class="cart-icon-wrapper">
-        <i class="fas fa-shopping-cart"></i>
-        <div class="cart-badge" id="cart-badge-count">0</div>
+<div class="cart-footer">
+    <div class="cart-info-left" onclick="toggleModal(true)">
+        <div class="cart-icon-wrapper">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="cart-badge" id="cart-badge-count">0</div>
+        </div>
+        <span id="cart-total-footer" style="font-weight: bold; color: var(--highlight);">R$ 0,00</span>
     </div>
-    <span id="cart-total-footer" style="font-weight: bold; color: var(--highlight);">R$ 0,00</span>
+    
+    <button class="btn-finish-cart" onclick="toggleModal(true)">
+        Finalizar Pedido
+    </button>
 </div>
 
 <div class="modal" id="orderModal">
@@ -186,7 +207,7 @@
         <div class="form-group">
             <label>Como deseja receber? *</label>
             <select id="order-type" onchange="handleOrderTypeChange()">
-                <option value="Retirada">Retirada no Balcão (Grátis)</option>
+                <option value="Retirar no Local">Retirar no Local (Grátis)</option>
                 <option value="Entrega">Entrega (Taxa R$ 5,00)</option>
             </select>
         </div>
@@ -207,7 +228,7 @@
 
         <div id="change-container">
             <label>Troco para quanto?</label>
-            <input type="text" id="cust-change" placeholder="Ex: 50,00">
+            <input type="number" id="cust-change" step="0.01" min="0" placeholder="Ex: 50.00" oninput="validity.valid||(value='');">
         </div>
 
         <div class="form-group">
@@ -273,15 +294,10 @@
         }
     }
 
-    // Função de horário atualizada para 08:00 às 02:00
     function isStoreOpen() {
         const agora = new Date();
         const hora = agora.getHours();
-        
-        // Aberto se for entre 08:00 e 23:59 OU entre 00:00 e 01:59 (madrugada)
-        if (hora >= 8 || hora < 2) {
-            return true;
-        }
+        if (hora >= 8 || hora < 2) return true;
         return false;
     }
 
@@ -373,7 +389,11 @@
         msg += `*Cliente:* ${name}\n*Tipo:* ${type}\n`;
         if(type === "Entrega") msg += `*Endereço:* ${addr}\n`;
         msg += `*Pagamento:* ${pay}\n`;
-        if(pay === "Dinheiro" && change) msg += `*Troco para:* ${change}\n`;
+        
+        if(pay === "Dinheiro" && change) {
+            msg += `*Troco para:* R$ ${parseFloat(change).toFixed(2).replace('.',',')}\n`;
+        }
+        
         if(obs) msg += `*Obs:* ${obs}\n\n*ITENS:*\n`;
 
         for (let n in cart) msg += `• ${cart[n].qnt}x ${n}\n`;
